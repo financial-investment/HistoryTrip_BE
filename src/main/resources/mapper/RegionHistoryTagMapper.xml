@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.RegionHistoryTagMapper">
+    <sql id="regionHistoryTagColumns">
+        r.region_id,
+        r.sido_name,
+        r.gugun_name,
+        ht.tag_id,
+        ht.tag_name,
+        ht.tag_type,
+        rht.weight,
+        rht.confidence,
+        rht.quiz_count,
+        rht.evidence_source,
+        rht.evidence_summary,
+        rht.evidence_places,
+        rht.source_url,
+        rht.needs_review,
+        rht.created_at,
+        rht.updated_at
+    </sql>
+
+    <select id="findRegionHistoryTags" resultType="com.ssafy.history.dto.RegionHistoryTagDto">
+        SELECT <include refid="regionHistoryTagColumns"/>
+        FROM region_history_tags rht
+        JOIN regions r ON r.region_id = rht.region_id
+        JOIN history_tags ht ON ht.tag_id = rht.tag_id
+        <where>
+            <if test="sidoName != null and sidoName != ''">
+                AND r.sido_name = #{sidoName}
+            </if>
+            <if test="gugunName != null and gugunName != ''">
+                AND r.gugun_name = #{gugunName}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    ht.tag_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR rht.evidence_summary LIKE CONCAT('%', #{keyword}, '%')
+                    OR rht.evidence_places LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="tagType != null and tagType != ''">
+                AND ht.tag_type = #{tagType}
+            </if>
+            <if test="minWeight != null">
+                AND rht.weight &gt;= #{minWeight}
+            </if>
+            <if test="needsReview != null">
+                AND rht.needs_review = #{needsReview}
+            </if>
+        </where>
+        ORDER BY r.sido_name, r.gugun_name, rht.weight DESC, ht.tag_type, ht.tag_name
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findByRegionId" resultType="com.ssafy.history.dto.RegionHistoryTagDto">
+        SELECT <include refid="regionHistoryTagColumns"/>
+        FROM region_history_tags rht
+        JOIN regions r ON r.region_id = rht.region_id
+        JOIN history_tags ht ON ht.tag_id = rht.tag_id
+        WHERE rht.region_id = #{regionId}
+        ORDER BY rht.weight DESC, ht.tag_type, ht.tag_name
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+</mapper>

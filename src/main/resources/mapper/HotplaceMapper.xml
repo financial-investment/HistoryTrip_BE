@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.HotplaceMapper">
+    <sql id="hotplaceColumns">
+        h.hotplace_id,
+        h.user_id,
+        u.nickname AS user_nickname,
+        h.linked_place_id,
+        p.title AS linked_place_title,
+        h.title,
+        h.content,
+        h.address,
+        h.latitude,
+        h.longitude,
+        h.status,
+        h.created_at,
+        h.updated_at
+    </sql>
+
+    <select id="findHotplaces" resultType="com.ssafy.history.dto.HotplaceDto">
+        SELECT <include refid="hotplaceColumns"/>
+        FROM hotplaces h
+        LEFT JOIN users u ON u.user_id = h.user_id
+        LEFT JOIN historical_places p ON p.place_id = h.linked_place_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    h.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR h.content LIKE CONCAT('%', #{keyword}, '%')
+                    OR h.address LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="status != null and status != ''">
+                AND h.status = #{status}
+            </if>
+        </where>
+        ORDER BY h.hotplace_id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findHotplaceById" resultType="com.ssafy.history.dto.HotplaceDto">
+        SELECT <include refid="hotplaceColumns"/>
+        FROM hotplaces h
+        LEFT JOIN users u ON u.user_id = h.user_id
+        LEFT JOIN historical_places p ON p.place_id = h.linked_place_id
+        WHERE h.hotplace_id = #{hotplaceId}
+    </select>
+
+    <select id="findImagesByHotplaceId" resultType="com.ssafy.history.dto.HotplaceImageDto">
+        SELECT image_id, hotplace_id, image_url, original_name, saved_name, created_at
+        FROM hotplace_images
+        WHERE hotplace_id = #{hotplaceId}
+        ORDER BY image_id
+    </select>
+</mapper>

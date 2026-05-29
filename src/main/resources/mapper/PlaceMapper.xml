@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.PlaceMapper">
+    <sql id="placeColumns">
+        p.place_id,
+        p.region_id,
+        r.sido_name,
+        r.gugun_name,
+        p.source_type,
+        p.source_id,
+        p.title,
+        p.address,
+        p.latitude,
+        p.longitude,
+        p.description,
+        p.heritage_type,
+        p.period,
+        p.view_count,
+        p.created_at,
+        p.updated_at
+    </sql>
+
+    <select id="findPlaces" resultType="com.ssafy.history.dto.HistoricalPlaceDto">
+        SELECT <include refid="placeColumns"/>
+        FROM historical_places p
+        LEFT JOIN regions r ON r.region_id = p.region_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    p.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.address LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.description LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.period LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.heritage_type LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="sidoName != null and sidoName != ''">
+                AND r.sido_name = #{sidoName}
+            </if>
+            <if test="gugunName != null and gugunName != ''">
+                AND r.gugun_name = #{gugunName}
+            </if>
+        </where>
+        ORDER BY p.place_id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findPlaceById" resultType="com.ssafy.history.dto.HistoricalPlaceDto">
+        SELECT <include refid="placeColumns"/>
+        FROM historical_places p
+        LEFT JOIN regions r ON r.region_id = p.region_id
+        WHERE p.place_id = #{placeId}
+    </select>
+
+    <select id="findTagsByPlaceId" resultType="com.ssafy.history.dto.HistoryTagDto">
+        SELECT ht.tag_id, ht.tag_name, ht.tag_type
+        FROM place_tags pt
+        JOIN history_tags ht ON ht.tag_id = pt.tag_id
+        WHERE pt.place_id = #{placeId}
+        ORDER BY ht.tag_type, ht.tag_name
+    </select>
+
+    <select id="findImagesByPlaceId" resultType="com.ssafy.history.dto.PlaceImageDto">
+        SELECT
+            image_id,
+            place_id,
+            image_url,
+            thumbnail_url,
+            source_type,
+            is_main AS main,
+            created_at
+        FROM place_images
+        WHERE place_id = #{placeId}
+        ORDER BY is_main DESC, image_id
+    </select>
+
+    <select id="findNewsByPlaceId" resultType="com.ssafy.history.dto.NewsDto">
+        SELECT n.news_id, n.title, n.url, n.summary, n.source, n.published_at, n.created_at
+        FROM place_news pn
+        JOIN news n ON n.news_id = pn.news_id
+        WHERE pn.place_id = #{placeId}
+        ORDER BY n.published_at DESC, n.created_at DESC
+    </select>
+</mapper>

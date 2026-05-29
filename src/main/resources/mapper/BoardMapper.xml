@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.BoardMapper">
+    <sql id="boardColumns">
+        b.board_id,
+        b.user_id,
+        u.nickname AS user_nickname,
+        b.trip_plan_id,
+        tp.title AS trip_plan_title,
+        b.title,
+        b.content,
+        b.board_type,
+        b.view_count,
+        b.created_at,
+        b.updated_at
+    </sql>
+
+    <select id="findBoards" resultType="com.ssafy.history.dto.BoardDto">
+        SELECT <include refid="boardColumns"/>
+        FROM boards b
+        LEFT JOIN users u ON u.user_id = b.user_id
+        LEFT JOIN trip_plans tp ON tp.trip_plan_id = b.trip_plan_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    b.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR b.content LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="boardType != null and boardType != ''">
+                AND b.board_type = #{boardType}
+            </if>
+        </where>
+        ORDER BY b.board_id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findBoardById" resultType="com.ssafy.history.dto.BoardDto">
+        SELECT <include refid="boardColumns"/>
+        FROM boards b
+        LEFT JOIN users u ON u.user_id = b.user_id
+        LEFT JOIN trip_plans tp ON tp.trip_plan_id = b.trip_plan_id
+        WHERE b.board_id = #{boardId}
+    </select>
+
+    <select id="findCommentsByBoardId" resultType="com.ssafy.history.dto.BoardCommentDto">
+        SELECT
+            c.comment_id,
+            c.board_id,
+            c.user_id,
+            u.nickname AS user_nickname,
+            c.content,
+            c.created_at,
+            c.updated_at
+        FROM board_comments c
+        LEFT JOIN users u ON u.user_id = c.user_id
+        WHERE c.board_id = #{boardId}
+        ORDER BY c.comment_id
+    </select>
+
+    <select id="findImagesByBoardId" resultType="com.ssafy.history.dto.BoardImageDto">
+        SELECT image_id, board_id, image_url, original_name, saved_name, created_at
+        FROM board_images
+        WHERE board_id = #{boardId}
+        ORDER BY image_id
+    </select>
+</mapper>

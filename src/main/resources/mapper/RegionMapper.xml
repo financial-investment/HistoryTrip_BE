@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.RegionMapper">
+    <select id="findRegions" resultType="com.ssafy.history.dto.RegionDto">
+        SELECT region_id, sido_code, sido_name, gugun_code, gugun_name
+        FROM regions
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    sido_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR gugun_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY sido_name, gugun_name
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findRegionById" resultType="com.ssafy.history.dto.RegionDto">
+        SELECT region_id, sido_code, sido_name, gugun_code, gugun_name
+        FROM regions
+        WHERE region_id = #{regionId}
+    </select>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.QuizMapper">
+    <select id="findQuizzes" resultType="com.ssafy.history.dto.QuizDto">
+        SELECT DISTINCT
+            q.quiz_id,
+            q.question_text,
+            q.question_image_url,
+            q.answer,
+            q.explanation,
+            q.difficulty,
+            q.source,
+            q.created_at,
+            q.updated_at
+        FROM quizzes q
+        LEFT JOIN quiz_tags qt ON qt.quiz_id = q.quiz_id
+        LEFT JOIN history_tags ht ON ht.tag_id = qt.tag_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    q.question_text LIKE CONCAT('%', #{keyword}, '%')
+                    OR q.source LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="difficulty != null and difficulty != ''">
+                AND q.difficulty = #{difficulty}
+            </if>
+            <if test="tagName != null and tagName != ''">
+                AND ht.tag_name LIKE CONCAT('%', #{tagName}, '%')
+            </if>
+            <if test="tagType != null and tagType != ''">
+                AND ht.tag_type = #{tagType}
+            </if>
+        </where>
+        ORDER BY q.quiz_id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findQuizById" resultType="com.ssafy.history.dto.QuizDto">
+        SELECT quiz_id, question_text, question_image_url, answer, explanation, difficulty, source, created_at, updated_at
+        FROM quizzes
+        WHERE quiz_id = #{quizId}
+    </select>
+
+    <select id="findTagsByQuizId" resultType="com.ssafy.history.dto.HistoryTagDto">
+        SELECT ht.tag_id, ht.tag_name, ht.tag_type
+        FROM quiz_tags qt
+        JOIN history_tags ht ON ht.tag_id = qt.tag_id
+        WHERE qt.quiz_id = #{quizId}
+        ORDER BY ht.tag_type, ht.tag_name
+    </select>
+</mapper>

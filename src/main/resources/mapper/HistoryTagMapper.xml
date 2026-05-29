@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.mapper.HistoryTagMapper">
+    <select id="findHistoryTags" resultType="com.ssafy.history.dto.HistoryTagDto">
+        SELECT tag_id, tag_name, tag_type
+        FROM history_tags
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND tag_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="tagType != null and tagType != ''">
+                AND tag_type = #{tagType}
+            </if>
+        </where>
+        ORDER BY tag_type, tag_name
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findHistoryTagById" resultType="com.ssafy.history.dto.HistoryTagDto">
+        SELECT tag_id, tag_name, tag_type
+        FROM history_tags
+        WHERE tag_id = #{tagId}
+    </select>
+</mapper>
