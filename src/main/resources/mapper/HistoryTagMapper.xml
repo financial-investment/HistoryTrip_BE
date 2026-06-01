@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.history.mapper.HistoryTagMapper">
-    <select id="findHistoryTags" resultType="com.ssafy.history.dto.HistoryTagDto">
+<mapper namespace="com.ssafy.history.history.mapper.HistoryTagMapper">
+    <select id="findHistoryTags" resultType="com.ssafy.history.history.dto.HistoryTagDto">
         SELECT tag_id, tag_name, tag_type
         FROM history_tags
         <where>
@@ -19,7 +19,7 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findHistoryTagById" resultType="com.ssafy.history.dto.HistoryTagDto">
+    <select id="findHistoryTagById" resultType="com.ssafy.history.history.dto.HistoryTagDto">
         SELECT tag_id, tag_name, tag_type
         FROM history_tags
         WHERE tag_id = #{tagId}

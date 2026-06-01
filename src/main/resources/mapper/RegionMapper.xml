@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.history.mapper.RegionMapper">
-    <select id="findRegions" resultType="com.ssafy.history.dto.RegionDto">
+<mapper namespace="com.ssafy.history.region.mapper.RegionMapper">
+    <select id="findRegions" resultType="com.ssafy.history.region.dto.RegionDto">
         SELECT region_id, sido_code, sido_name, gugun_code, gugun_name
         FROM regions
         <where>
@@ -19,7 +19,7 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findRegionById" resultType="com.ssafy.history.dto.RegionDto">
+    <select id="findRegionById" resultType="com.ssafy.history.region.dto.RegionDto">
         SELECT region_id, sido_code, sido_name, gugun_code, gugun_name
         FROM regions
         WHERE region_id = #{regionId}
