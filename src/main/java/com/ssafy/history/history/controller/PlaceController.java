@@ -3,6 +3,7 @@ package com.ssafy.history.history.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,53 +14,62 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
 import com.ssafy.history.history.dto.HistoryTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
+import com.ssafy.history.history.dto.PlaceRegionDto;
 import com.ssafy.history.history.service.PlaceService;
 import com.ssafy.history.news.dto.NewsDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
-@Tag(name = "Historical Places", description = "역사 관광지와 연결 데이터 조회")
+@Tag(name = "Historical Places", description = "Historical place search and lookup")
 @RestController
 @RequestMapping("/api/places")
+@RequiredArgsConstructor
 public class PlaceController {
     private final PlaceService placeService;
 
-    public PlaceController(PlaceService placeService) {
-        this.placeService = placeService;
-    }
-
-    @Operation(summary = "역사 관광지 목록 조회")
+    @Operation(summary = "통합 키워드 검색, 지역+태그로 필터링 가능")
     @GetMapping
-    public List<HistoricalPlaceDto> findPlaces(
-            @Parameter(description = "장소명/주소/설명/시대 검색어") @RequestParam(required = false) String keyword,
+    public ResponseEntity<List<HistoricalPlaceDto>> searchPlaces(
+            @Parameter(description = "Search keyword for place, address, region, period, type, or tag")
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sidoName,
             @RequestParam(required = false) String gugunName,
+            @RequestParam(required = false) String tagName,
             @RequestParam(defaultValue = "20") Integer limit,
             @RequestParam(defaultValue = "0") Integer offset) {
-        return placeService.findPlaces(keyword, sidoName, gugunName, limit, offset);
+        return ResponseEntity.ok(placeService.searchPlaces(keyword, sidoName, gugunName, tagName, limit, offset));
     }
+    
+    @Operation(summary = "특정 관광지의 지역 찾기")
+    @GetMapping("/{placeId}/region")
+    public ResponseEntity<PlaceRegionDto> findRegionByPlaceId(@PathVariable long placeId) {
+        return ResponseEntity.status(HttpStatus.OK).body(placeService.findRegionByPlaceId(placeId));
+    }
+    
+    
 
-    @Operation(summary = "역사 관광지 단건 조회")
+    @Operation(summary = "Find historical place by id")
     @GetMapping("/{placeId}")
     public ResponseEntity<HistoricalPlaceDto> findPlaceById(@PathVariable long placeId) {
         return ResponseEntity.of(Optional.ofNullable(placeService.findPlaceById(placeId)));
     }
 
-    @Operation(summary = "장소에 연결된 역사 태그 조회")
+    @Operation(summary = "Find tags linked to a historical place")
     @GetMapping("/{placeId}/tags")
     public List<HistoryTagDto> findTagsByPlaceId(@PathVariable long placeId) {
         return placeService.findTagsByPlaceId(placeId);
     }
 
-    @Operation(summary = "장소 이미지 조회")
+    @Operation(summary = "Find images linked to a historical place")
     @GetMapping("/{placeId}/images")
     public List<PlaceImageDto> findImagesByPlaceId(@PathVariable long placeId) {
         return placeService.findImagesByPlaceId(placeId);
     }
 
-    @Operation(summary = "장소 관련 뉴스 조회")
+    @Operation(summary = "Find news linked to a historical place")
     @GetMapping("/{placeId}/news")
     public List<NewsDto> findNewsByPlaceId(@PathVariable long placeId) {
         return placeService.findNewsByPlaceId(placeId);
