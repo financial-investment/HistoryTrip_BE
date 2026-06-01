@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.history.mapper.PlaceMapper">
+<mapper namespace="com.ssafy.history.history.mapper.PlaceMapper">
     <sql id="placeColumns">
         p.place_id,
         p.region_id,
@@ -23,7 +23,7 @@
         p.updated_at
     </sql>
 
-    <select id="findPlaces" resultType="com.ssafy.history.dto.HistoricalPlaceDto">
+    <select id="findPlaces" resultType="com.ssafy.history.history.dto.HistoricalPlaceDto">
         SELECT <include refid="placeColumns"/>
         FROM historical_places p
         LEFT JOIN regions r ON r.region_id = p.region_id
@@ -48,14 +48,14 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findPlaceById" resultType="com.ssafy.history.dto.HistoricalPlaceDto">
+    <select id="findPlaceById" resultType="com.ssafy.history.history.dto.HistoricalPlaceDto">
         SELECT <include refid="placeColumns"/>
         FROM historical_places p
         LEFT JOIN regions r ON r.region_id = p.region_id
         WHERE p.place_id = #{placeId}
     </select>
 
-    <select id="findTagsByPlaceId" resultType="com.ssafy.history.dto.HistoryTagDto">
+    <select id="findTagsByPlaceId" resultType="com.ssafy.history.history.dto.HistoryTagDto">
         SELECT ht.tag_id, ht.tag_name, ht.tag_type
         FROM place_tags pt
         JOIN history_tags ht ON ht.tag_id = pt.tag_id
@@ -63,7 +63,7 @@
         ORDER BY ht.tag_type, ht.tag_name
     </select>
 
-    <select id="findImagesByPlaceId" resultType="com.ssafy.history.dto.PlaceImageDto">
+    <select id="findImagesByPlaceId" resultType="com.ssafy.history.history.dto.PlaceImageDto">
         SELECT
             image_id,
             place_id,
@@ -77,7 +77,7 @@
         ORDER BY is_main DESC, image_id
     </select>
 
-    <select id="findNewsByPlaceId" resultType="com.ssafy.history.dto.NewsDto">
+    <select id="findNewsByPlaceId" resultType="com.ssafy.history.news.dto.NewsDto">
         SELECT n.news_id, n.title, n.url, n.summary, n.source, n.published_at, n.created_at
         FROM place_news pn
         JOIN news n ON n.news_id = pn.news_id

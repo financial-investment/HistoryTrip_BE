@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.history.mapper.RegionHistoryTagMapper">
+<mapper namespace="com.ssafy.history.region.mapper.RegionHistoryTagMapper">
     <sql id="regionHistoryTagColumns">
         r.region_id,
         r.sido_name,
@@ -23,7 +23,7 @@
         rht.updated_at
     </sql>
 
-    <select id="findRegionHistoryTags" resultType="com.ssafy.history.dto.RegionHistoryTagDto">
+    <select id="findRegionHistoryTags" resultType="com.ssafy.history.region.dto.RegionHistoryTagDto">
         SELECT <include refid="regionHistoryTagColumns"/>
         FROM region_history_tags rht
         JOIN regions r ON r.region_id = rht.region_id
@@ -56,7 +56,7 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findByRegionId" resultType="com.ssafy.history.dto.RegionHistoryTagDto">
+    <select id="findByRegionId" resultType="com.ssafy.history.region.dto.RegionHistoryTagDto">
         SELECT <include refid="regionHistoryTagColumns"/>
         FROM region_history_tags rht
         JOIN regions r ON r.region_id = rht.region_id

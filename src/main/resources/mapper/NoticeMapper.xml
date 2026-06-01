@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.history.mapper.NoticeMapper">
+<mapper namespace="com.ssafy.history.board.mapper.NoticeMapper">
     <sql id="noticeColumns">
         n.notice_id,
         n.user_id,
@@ -16,7 +16,7 @@
         n.updated_at
     </sql>
 
-    <select id="findNotices" resultType="com.ssafy.history.dto.NoticeDto">
+    <select id="findNotices" resultType="com.ssafy.history.board.dto.NoticeDto">
         SELECT <include refid="noticeColumns"/>
         FROM notices n
         LEFT JOIN users u ON u.user_id = n.user_id
@@ -35,7 +35,7 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findNoticeById" resultType="com.ssafy.history.dto.NoticeDto">
+    <select id="findNoticeById" resultType="com.ssafy.history.board.dto.NoticeDto">
         SELECT <include refid="noticeColumns"/>
         FROM notices n
         LEFT JOIN users u ON u.user_id = n.user_id
