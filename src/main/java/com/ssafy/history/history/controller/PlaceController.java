@@ -46,32 +46,32 @@ public class PlaceController {
     @Operation(summary = "특정 관광지의 지역 찾기")
     @GetMapping("/{placeId}/region")
     public ResponseEntity<PlaceRegionDto> findRegionByPlaceId(@PathVariable long placeId) {
-        return ResponseEntity.status(HttpStatus.OK).body(placeService.findRegionByPlaceId(placeId));
+        return ResponseEntity.of(Optional.ofNullable(placeService.findRegionByPlaceId(placeId)));
     }
     
     
 
-    @Operation(summary = "Find historical place by id")
-    @GetMapping("/{placeId}")
-    public ResponseEntity<HistoricalPlaceDto> findPlaceById(@PathVariable long placeId) {
-        return ResponseEntity.of(Optional.ofNullable(placeService.findPlaceById(placeId)));
-    }
-
-    @Operation(summary = "Find tags linked to a historical place")
-    @GetMapping("/{placeId}/tags")
-    public List<HistoryTagDto> findTagsByPlaceId(@PathVariable long placeId) {
-        return placeService.findTagsByPlaceId(placeId);
-    }
-
-    @Operation(summary = "Find images linked to a historical place")
-    @GetMapping("/{placeId}/images")
-    public List<PlaceImageDto> findImagesByPlaceId(@PathVariable long placeId) {
-        return placeService.findImagesByPlaceId(placeId);
-    }
-
-    @Operation(summary = "Find news linked to a historical place")
-    @GetMapping("/{placeId}/news")
-    public List<NewsDto> findNewsByPlaceId(@PathVariable long placeId) {
-        return placeService.findNewsByPlaceId(placeId);
-    }
+//    @Operation(summary = "Find historical place by id")
+//    @GetMapping("/{placeId}")
+//    public ResponseEntity<HistoricalPlaceDto> findPlaceById(@PathVariable long placeId) {
+//        return ResponseEntity.of(Optional.ofNullable(placeService.findPlaceById(placeId)));
+//    }
+//
+//    @Operation(summary = "Find tags linked to a historical place")
+//    @GetMapping("/{placeId}/tags")
+//    public List<HistoryTagDto> findTagsByPlaceId(@PathVariable long placeId) {
+//        return placeService.findTagsByPlaceId(placeId);
+//    }
+//
+//    @Operation(summary = "Find images linked to a historical place")
+//    @GetMapping("/{placeId}/images")
+//    public List<PlaceImageDto> findImagesByPlaceId(@PathVariable long placeId) {
+//        return placeService.findImagesByPlaceId(placeId);
+//    }
+//
+//    @Operation(summary = "Find news linked to a historical place")
+//    @GetMapping("/{placeId}/news")
+//    public List<NewsDto> findNewsByPlaceId(@PathVariable long placeId) {
+//        return placeService.findNewsByPlaceId(placeId);
+//    }
 }

@@ -9,8 +9,6 @@
         p.region_id,
         r.sido_name,
         r.gugun_name,
-        p.source_type,
-        p.source_id,
         p.title,
         p.address,
         p.latitude,
@@ -20,7 +18,7 @@
         p.period,
         p.view_count,
         p.created_at,
-        p.updated_at
+        p.image_url
     </sql>
 
     <select id="searchPlaces" resultType="com.ssafy.history.history.dto.HistoricalPlaceDto">

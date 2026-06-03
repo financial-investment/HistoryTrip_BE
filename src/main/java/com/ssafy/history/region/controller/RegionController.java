@@ -3,6 +3,7 @@ package com.ssafy.history.region.controller;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,10 +49,10 @@ public class RegionController {
 
     @Operation(summary = "특정 지역의 역사 태그 조회")
     @GetMapping("/{regionId}/history-tags")
-    public List<RegionHistoryTagDto> findHistoryTagsByRegionId(
+    public ResponseEntity<List<RegionHistoryTagDto>> findHistoryTagsByRegionId(
             @PathVariable long regionId,
             @RequestParam(defaultValue = "50") Integer limit,
             @RequestParam(defaultValue = "0") Integer offset) {
-        return regionHistoryTagService.findByRegionId(regionId, limit, offset);
+        return ResponseEntity.status(HttpStatus.OK).body(regionHistoryTagService.findByRegionId(regionId, limit, offset));
     }
 }

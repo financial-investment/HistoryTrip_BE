@@ -15,8 +15,6 @@ public class HistoricalPlaceDto {
     private Long regionId;
     private String sidoName;
     private String gugunName;
-    private String sourceType;
-    private String sourceId;
     private String title;
     private String address;
     private BigDecimal latitude;
@@ -26,7 +24,6 @@ public class HistoricalPlaceDto {
     private String period;
     private Integer viewCount;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    private String imageUrl;
     
 }
