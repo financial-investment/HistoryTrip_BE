@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
 import com.ssafy.history.history.service.PlaceService;
 import com.ssafy.history.news.dto.NewsDto;
@@ -49,7 +49,7 @@ public class PlaceController {
 
     @Operation(summary = "장소에 연결된 역사 태그 조회")
     @GetMapping("/{placeId}/tags")
-    public List<HistoryTagDto> findTagsByPlaceId(@PathVariable long placeId) {
+    public List<QuizRegionTagDto> findTagsByPlaceId(@PathVariable long placeId) {
         return placeService.findTagsByPlaceId(placeId);
     }
 

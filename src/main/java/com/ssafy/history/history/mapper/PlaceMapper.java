@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
 import com.ssafy.history.news.dto.NewsDto;
 
@@ -19,7 +19,7 @@ public interface PlaceMapper {
 
     HistoricalPlaceDto findPlaceById(@Param("placeId") long placeId);
 
-    List<HistoryTagDto> findTagsByPlaceId(@Param("placeId") long placeId);
+    List<QuizRegionTagDto> findTagsByPlaceId(@Param("placeId") long placeId);
 
     List<PlaceImageDto> findImagesByPlaceId(@Param("placeId") long placeId);
 

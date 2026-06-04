@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.mapper.HistoryTagMapper;
 import com.ssafy.history.util.QuerySupport;
 
@@ -16,7 +16,7 @@ public class HistoryTagService {
         this.historyTagMapper = historyTagMapper;
     }
 
-    public List<HistoryTagDto> findHistoryTags(String keyword, String tagType, Integer limit, Integer offset) {
+    public List<QuizRegionTagDto> findHistoryTags(String keyword, String tagType, Integer limit, Integer offset) {
         return historyTagMapper.findHistoryTags(
                 keyword,
                 tagType,
@@ -24,7 +24,7 @@ public class HistoryTagService {
                 QuerySupport.normalizeOffset(offset));
     }
 
-    public HistoryTagDto findHistoryTagById(long tagId) {
+    public QuizRegionTagDto findHistoryTagById(long tagId) {
         return historyTagMapper.findHistoryTagById(tagId);
     }
 }

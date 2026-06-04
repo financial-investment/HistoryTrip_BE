@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.service.HistoryTagService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ public class HistoryTagController {
 
     @Operation(summary = "역사 태그 목록 조회")
     @GetMapping
-    public List<HistoryTagDto> findHistoryTags(
+    public List<QuizRegionTagDto> findHistoryTags(
             @Parameter(description = "태그명 검색어") @RequestParam(required = false) String keyword,
             @Parameter(description = "PERIOD, EVENT, PERSON, PLACE_TYPE, KEYWORD, PLACE")
             @RequestParam(required = false) String tagType,
@@ -40,7 +40,7 @@ public class HistoryTagController {
 
     @Operation(summary = "역사 태그 단건 조회")
     @GetMapping("/{tagId}")
-    public ResponseEntity<HistoryTagDto> findHistoryTagById(@PathVariable long tagId) {
+    public ResponseEntity<QuizRegionTagDto> findHistoryTagById(@PathVariable long tagId) {
         return ResponseEntity.of(Optional.ofNullable(historyTagService.findHistoryTagById(tagId)));
     }
 }
