@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
 import com.ssafy.history.history.dto.PlaceRegionDto;
 import com.ssafy.history.history.service.PlaceService;
@@ -42,11 +42,25 @@ public class PlaceController {
             @RequestParam(defaultValue = "0") Integer offset) {
         return ResponseEntity.ok(placeService.searchPlaces(keyword, sidoName, gugunName, tagName, limit, offset));
     }
+
+
+    @Operation(summary = "장소에 연결된 역사 태그 조회")
+    @GetMapping("/{placeId}/tags")
+    public List<QuizRegionTagDto> findTagsByPlaceId(@PathVariable long placeId) {
+        return placeService.findTagsByPlaceId(placeId);
+    }
+
+    @Operation(summary = "장소 이미지 조회")
+    @GetMapping("/{placeId}/images")
+    public List<PlaceImageDto> findImagesByPlaceId(@PathVariable long placeId) {
+        return placeService.findImagesByPlaceId(placeId);
+    }
     
     @Operation(summary = "특정 관광지의 지역 찾기")
     @GetMapping("/{placeId}/region")
     public ResponseEntity<PlaceRegionDto> findRegionByPlaceId(@PathVariable long placeId) {
         return ResponseEntity.of(Optional.ofNullable(placeService.findRegionByPlaceId(placeId)));
+
     }
     
     

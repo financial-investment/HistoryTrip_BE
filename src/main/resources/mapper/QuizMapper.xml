@@ -1,55 +1,59 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.history.quiz.mapper.QuizMapper">
-    <select id="findQuizzes" resultType="com.ssafy.history.quiz.dto.QuizDto">
-        SELECT DISTINCT
-            q.quiz_id,
-            q.question_text,
-            q.question_image_url,
-            q.answer,
-            q.explanation,
-            q.difficulty,
-            q.source,
-            q.created_at,
-            q.updated_at
-        FROM quizzes q
-        LEFT JOIN quiz_tags qt ON qt.quiz_id = q.quiz_id
-        LEFT JOIN history_tags ht ON ht.tag_id = qt.tag_id
-        <where>
-            <if test="keyword != null and keyword != ''">
-                AND (
-                    q.question_text LIKE CONCAT('%', #{keyword}, '%')
-                    OR q.source LIKE CONCAT('%', #{keyword}, '%')
-                )
-            </if>
-            <if test="difficulty != null and difficulty != ''">
-                AND q.difficulty = #{difficulty}
-            </if>
-            <if test="tagName != null and tagName != ''">
-                AND ht.tag_name LIKE CONCAT('%', #{tagName}, '%')
-            </if>
-            <if test="tagType != null and tagType != ''">
-                AND ht.tag_type = #{tagType}
-            </if>
-        </where>
-        ORDER BY q.quiz_id
-        LIMIT #{limit} OFFSET #{offset}
-    </select>
+	<select id="findQuizzes" resultType="com.ssafy.history.quiz.dto.QuizDto">
+		
+		SELECT * FROM quiz
+    	ORDER BY quiz_id DESC
+    	LIMIT #{limit}
+    	OFFSET #{offset}
+		
+		 </select>
 
-    <select id="findQuizById" resultType="com.ssafy.history.quiz.dto.QuizDto">
-        SELECT quiz_id, question_text, question_image_url, answer, explanation, difficulty, source, created_at, updated_at
-        FROM quizzes
-        WHERE quiz_id = #{quizId}
-    </select>
+	<select id="findQuizById" resultType="com.ssafy.history.quiz.dto.QuizDto">
+		SELECT *
+		FROM quiz
+		WHERE quiz_id = #{quizId}
+	</select>
 
-    <select id="findTagsByQuizId" resultType="com.ssafy.history.history.dto.HistoryTagDto">
-        SELECT ht.tag_id, ht.tag_name, ht.tag_type
-        FROM quiz_tags qt
-        JOIN history_tags ht ON ht.tag_id = qt.tag_id
-        WHERE qt.quiz_id = #{quizId}
-        ORDER BY ht.tag_type, ht.tag_name
-    </select>
+	<select id="findTagsByQuizId"
+		resultType="com.ssafy.history.history.dto.QuizRegionTagDto">
+		SELECT quiz_region_tags_id, tag_name, region_id, quiz_id
+		FROM quiz_region_tags 
+		WHERE quiz_id = #{quizId}
+	</select>
+
+	<select id="findRandomQuizByRegion"
+		resultType="com.ssafy.history.quiz.dto.QuizDto"> 
+		SELECT DISTINCT q.*
+		FROM regions r JOIN quiz_region_tags qrt ON r.region_id =
+		qrt.region_id JOIN quiz q
+		ON qrt.quiz_id = q.quiz_id <where>
+			<if test="#{sidoCode}!=null">
+				r.sido_code = #{sidoCode}
+			</if>
+			<if test="#{gugunCode}!=null">
+				AND r.gugun_code = #{gugunCode}
+			</if>
+		</where>
+	</select>
+
+	<insert id="insertQuizResult">
+		INSERT INTO quiz_results (
+		quiz_id,
+		user_id,
+		user_answer,
+		is_correct,
+		solved_at
+		)
+		VALUES (
+		#{quizId},
+		#{userId},
+		#{userAnswer},
+		#{isCorrect},
+		NOW()
+		)
+	</insert>
+
 </mapper>

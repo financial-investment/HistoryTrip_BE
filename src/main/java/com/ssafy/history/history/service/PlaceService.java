@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
 import com.ssafy.history.history.dto.PlaceRegionDto;
 import com.ssafy.history.history.mapper.PlaceMapper;
@@ -45,7 +45,7 @@ public class PlaceService {
         return placeMapper.findPlaceById(placeId);
     }
 
-    public List<HistoryTagDto> findTagsByPlaceId(long placeId) {
+    public List<QuizRegionTagDto> findTagsByPlaceId(long placeId) {
         return placeMapper.findTagsByPlaceId(placeId);
     }
 

@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 
 public interface HistoryTagMapper {
-    List<HistoryTagDto> findHistoryTags(
+    List<QuizRegionTagDto> findHistoryTags(
             @Param("keyword") String keyword,
             @Param("tagType") String tagType,
             @Param("limit") int limit,
             @Param("offset") int offset);
 
-    HistoryTagDto findHistoryTagById(@Param("tagId") long tagId);
+    QuizRegionTagDto findHistoryTagById(@Param("tagId") long tagId);
 }
