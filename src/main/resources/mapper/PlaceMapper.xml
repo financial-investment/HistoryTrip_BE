@@ -9,8 +9,6 @@
         p.region_id,
         r.sido_name,
         r.gugun_name,
-        p.source_type,
-        p.source_id,
         p.title,
         p.address,
         p.latitude,
@@ -20,10 +18,10 @@
         p.period,
         p.view_count,
         p.created_at,
-        p.updated_at
+        p.image_url
     </sql>
 
-    <select id="findPlaces" resultType="com.ssafy.history.history.dto.HistoricalPlaceDto">
+    <select id="searchPlaces" resultType="com.ssafy.history.history.dto.HistoricalPlaceDto">
         SELECT <include refid="placeColumns"/>
         FROM historical_places p
         LEFT JOIN regions r ON r.region_id = p.region_id
@@ -35,18 +33,70 @@
                     OR p.description LIKE CONCAT('%', #{keyword}, '%')
                     OR p.period LIKE CONCAT('%', #{keyword}, '%')
                     OR p.heritage_type LIKE CONCAT('%', #{keyword}, '%')
+                    OR r.sido_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR r.gugun_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR EXISTS (
+                        SELECT 1
+                        FROM place_tags pt
+                        JOIN history_tags ht ON ht.tag_id = pt.tag_id
+                        WHERE pt.place_id = p.place_id
+                          AND ht.tag_name LIKE CONCAT('%', #{keyword}, '%')
+                    )
                 )
             </if>
             <if test="sidoName != null and sidoName != ''">
-                AND r.sido_name = #{sidoName}
-            </if>
-            <if test="gugunName != null and gugunName != ''">
-                AND r.gugun_name = #{gugunName}
+			    AND r.sido_name LIKE CONCAT('%', #{sidoName}, '%')
+			</if>
+			<if test="gugunName != null and gugunName != ''">
+			    AND r.gugun_name LIKE CONCAT('%', #{gugunName}, '%')
+			</if>
+            <if test="tagName != null and tagName != ''">
+                AND EXISTS (
+                    SELECT 1
+                    FROM place_tags pt
+                    JOIN history_tags ht ON ht.tag_id = pt.tag_id
+                    WHERE pt.place_id = p.place_id
+                      AND ht.tag_name LIKE CONCAT('%', #{tagName}, '%')
+                )
             </if>
         </where>
-        ORDER BY p.place_id
+        ORDER BY
+            <choose>
+                <when test="keyword != null and keyword != ''">
+                    CASE
+                        WHEN p.title = #{keyword} THEN 1
+                        WHEN p.title LIKE CONCAT('%', #{keyword}, '%') THEN 2
+                        WHEN r.sido_name LIKE CONCAT('%', #{keyword}, '%')
+                          OR r.gugun_name LIKE CONCAT('%', #{keyword}, '%') THEN 3
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM place_tags pt
+                            JOIN history_tags ht ON ht.tag_id = pt.tag_id
+                            WHERE pt.place_id = p.place_id
+                              AND ht.tag_name LIKE CONCAT('%', #{keyword}, '%')
+                        ) THEN 4
+                        WHEN p.address LIKE CONCAT('%', #{keyword}, '%') THEN 5
+                        WHEN p.period LIKE CONCAT('%', #{keyword}, '%') THEN 6
+                        WHEN p.heritage_type LIKE CONCAT('%', #{keyword}, '%') THEN 7
+                        ELSE 8
+                    END,
+                </when>
+            </choose>
+            p.view_count DESC,
+            p.place_id
         LIMIT #{limit} OFFSET #{offset}
     </select>
+    
+    <select id="findRegionByPlaceId" resultType="com.ssafy.history.history.dto.PlaceRegionDto">
+    SELECT
+        p.place_id,
+        r.region_id,
+        r.sido_name,
+        r.gugun_name
+    FROM historical_places p
+    LEFT JOIN regions r ON r.region_id = p.region_id
+    WHERE p.place_id = #{placeId}
+	</select>
 
     <select id="findPlaceById" resultType="com.ssafy.history.history.dto.HistoricalPlaceDto">
         SELECT <include refid="placeColumns"/>

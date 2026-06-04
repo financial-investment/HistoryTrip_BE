@@ -7,31 +7,39 @@ import org.springframework.stereotype.Service;
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
 import com.ssafy.history.history.dto.HistoryTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
+import com.ssafy.history.history.dto.PlaceRegionDto;
 import com.ssafy.history.history.mapper.PlaceMapper;
 import com.ssafy.history.news.dto.NewsDto;
 import com.ssafy.history.util.QuerySupport;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class PlaceService {
     private final PlaceMapper placeMapper;
 
-    public PlaceService(PlaceMapper placeMapper) {
-        this.placeMapper = placeMapper;
-    }
-
-    public List<HistoricalPlaceDto> findPlaces(
+    public List<HistoricalPlaceDto> searchPlaces(
             String keyword,
             String sidoName,
             String gugunName,
+            String tagName,
             Integer limit,
             Integer offset) {
-        return placeMapper.findPlaces(
+        return placeMapper.searchPlaces(
                 keyword,
                 sidoName,
                 gugunName,
+                tagName,
                 QuerySupport.normalizeLimit(limit),
                 QuerySupport.normalizeOffset(offset));
     }
+    
+    public PlaceRegionDto findRegionByPlaceId(long placeId) {
+        return placeMapper.findRegionByPlaceId(placeId);
+    }
+    
+    
 
     public HistoricalPlaceDto findPlaceById(long placeId) {
         return placeMapper.findPlaceById(placeId);
@@ -48,4 +56,6 @@ public class PlaceService {
     public List<NewsDto> findNewsByPlaceId(long placeId) {
         return placeMapper.findNewsByPlaceId(placeId);
     }
+
+    
 }
