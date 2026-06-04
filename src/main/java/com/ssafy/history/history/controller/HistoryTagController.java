@@ -27,20 +27,22 @@ public class HistoryTagController {
         this.historyTagService = historyTagService;
     }
 
-    @Operation(summary = "역사 태그 목록 조회")
-    @GetMapping
-    public List<QuizRegionTagDto> findHistoryTags(
-            @Parameter(description = "태그명 검색어") @RequestParam(required = false) String keyword,
-            @Parameter(description = "PERIOD, EVENT, PERSON, PLACE_TYPE, KEYWORD, PLACE")
-            @RequestParam(required = false) String tagType,
-            @RequestParam(defaultValue = "50") Integer limit,
-            @RequestParam(defaultValue = "0") Integer offset) {
-        return historyTagService.findHistoryTags(keyword, tagType, limit, offset);
-    }
 
-    @Operation(summary = "역사 태그 단건 조회")
-    @GetMapping("/{tagId}")
-    public ResponseEntity<QuizRegionTagDto> findHistoryTagById(@PathVariable long tagId) {
-        return ResponseEntity.of(Optional.ofNullable(historyTagService.findHistoryTagById(tagId)));
-    }
+//    @Operation(summary = "역사 태그 목록 조회")
+//    @GetMapping
+//    public List<HistoryTagDto> findHistoryTags(
+//            @Parameter(description = "태그명 검색어") @RequestParam(required = false) String keyword,
+//            @Parameter(description = "PERIOD, EVENT, PERSON, PLACE_TYPE, KEYWORD, PLACE")
+//            @RequestParam(required = false) String tagType,
+//            @RequestParam(defaultValue = "50") Integer limit,
+//            @RequestParam(defaultValue = "0") Integer offset) {
+//        return historyTagService.findHistoryTags(keyword, tagType, limit, offset);
+//    }
+//
+//    @Operation(summary = "역사 태그 단건 조회")
+//    @GetMapping("/{tagId}")
+//    public ResponseEntity<HistoryTagDto> findHistoryTagById(@PathVariable long tagId) {
+//        return ResponseEntity.of(Optional.ofNullable(historyTagService.findHistoryTagById(tagId)));
+//    }
+
 }
