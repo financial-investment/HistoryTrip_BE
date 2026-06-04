@@ -1,4 +1,4 @@
-package com.ssafy.history.trip.dto;
+package com.ssafy.history.hotplace.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

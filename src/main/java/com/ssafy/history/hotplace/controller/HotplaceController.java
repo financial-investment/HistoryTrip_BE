@@ -1,4 +1,4 @@
-package com.ssafy.history.trip.controller;
+package com.ssafy.history.hotplace.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.history.trip.dto.HotplaceDto;
-import com.ssafy.history.trip.dto.HotplaceImageDto;
-import com.ssafy.history.trip.service.HotplaceService;
+import com.ssafy.history.hotplace.dto.HotplaceDto;
+import com.ssafy.history.hotplace.dto.HotplaceImageDto;
+import com.ssafy.history.hotplace.service.HotplaceService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

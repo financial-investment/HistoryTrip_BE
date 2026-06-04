@@ -87,6 +87,67 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
     
+    <select id="findPlacesForMap" resultType="com.ssafy.history.history.dto.PlaceMapDto">
+        SELECT
+            p.place_id,
+            p.title,
+            p.address,
+            p.latitude,
+            p.longitude,
+            p.heritage_type,
+            p.period,
+            p.image_url,
+            r.sido_name,
+            r.gugun_name
+        FROM historical_places p
+        LEFT JOIN regions r ON r.region_id = p.region_id
+        <where>
+            p.latitude IS NOT NULL
+            AND p.longitude IS NOT NULL
+            <if test="minLat != null and maxLat != null">
+                AND p.latitude BETWEEN #{minLat} AND #{maxLat}
+            </if>
+            <if test="minLng != null and maxLng != null">
+                AND p.longitude BETWEEN #{minLng} AND #{maxLng}
+            </if>
+            <if test="sidoName != null and sidoName != ''">
+                AND r.sido_name LIKE CONCAT('%', #{sidoName}, '%')
+            </if>
+            <if test="gugunName != null and gugunName != ''">
+                AND r.gugun_name LIKE CONCAT('%', #{gugunName}, '%')
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    p.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.address LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.description LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.period LIKE CONCAT('%', #{keyword}, '%')
+                    OR p.heritage_type LIKE CONCAT('%', #{keyword}, '%')
+                    OR r.sido_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR r.gugun_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR EXISTS (
+                        SELECT 1
+                        FROM place_tags pt
+                        JOIN history_tags ht ON ht.tag_id = pt.tag_id
+                        WHERE pt.place_id = p.place_id
+                          AND ht.tag_name LIKE CONCAT('%', #{keyword}, '%')
+                    )
+                )
+            </if>
+            <if test="tagName != null and tagName != ''">
+                AND EXISTS (
+                    SELECT 1
+                    FROM place_tags pt
+                    JOIN history_tags ht ON ht.tag_id = pt.tag_id
+                    WHERE pt.place_id = p.place_id
+                      AND ht.tag_name LIKE CONCAT('%', #{tagName}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY p.view_count DESC, p.place_id
+        LIMIT #{limit}
+    </select>
+
     <select id="findRegionByPlaceId" resultType="com.ssafy.history.history.dto.PlaceRegionDto">
     SELECT
         p.place_id,

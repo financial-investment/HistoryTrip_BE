@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.history.trip.mapper.HotplaceMapper">
+<mapper namespace="com.ssafy.history.hotplace.mapper.HotplaceMapper">
     <sql id="hotplaceColumns">
         h.hotplace_id,
         h.user_id,
@@ -20,7 +20,7 @@
         h.updated_at
     </sql>
 
-    <select id="findHotplaces" resultType="com.ssafy.history.trip.dto.HotplaceDto">
+    <select id="findHotplaces" resultType="com.ssafy.history.hotplace.dto.HotplaceDto">
         SELECT <include refid="hotplaceColumns"/>
         FROM hotplaces h
         LEFT JOIN users u ON u.user_id = h.user_id
@@ -41,7 +41,7 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="findHotplaceById" resultType="com.ssafy.history.trip.dto.HotplaceDto">
+    <select id="findHotplaceById" resultType="com.ssafy.history.hotplace.dto.HotplaceDto">
         SELECT <include refid="hotplaceColumns"/>
         FROM hotplaces h
         LEFT JOIN users u ON u.user_id = h.user_id
@@ -49,7 +49,7 @@
         WHERE h.hotplace_id = #{hotplaceId}
     </select>
 
-    <select id="findImagesByHotplaceId" resultType="com.ssafy.history.trip.dto.HotplaceImageDto">
+    <select id="findImagesByHotplaceId" resultType="com.ssafy.history.hotplace.dto.HotplaceImageDto">
         SELECT image_id, hotplace_id, image_url, original_name, saved_name, created_at
         FROM hotplace_images
         WHERE hotplace_id = #{hotplaceId}
