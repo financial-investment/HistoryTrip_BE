@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.quiz.dto.QuizDto;
 import com.ssafy.history.quiz.mapper.QuizMapper;
 import com.ssafy.history.util.QuerySupport;
@@ -18,17 +18,9 @@ public class QuizService {
     }
 
     public List<QuizDto> findQuizzes(
-            String keyword,
-            String difficulty,
-            String tagName,
-            String tagType,
             Integer limit,
             Integer offset) {
         return quizMapper.findQuizzes(
-                keyword,
-                difficulty,
-                tagName,
-                tagType,
                 QuerySupport.normalizeLimit(limit),
                 QuerySupport.normalizeOffset(offset));
     }
@@ -37,7 +29,30 @@ public class QuizService {
         return quizMapper.findQuizById(quizId);
     }
 
-    public List<HistoryTagDto> findTagsByQuizId(long quizId) {
+    public List<QuizRegionTagDto> findTagsByQuizId(long quizId) {
         return quizMapper.findTagsByQuizId(quizId);
     }
+
+	public List<QuizDto> findByRegionCode(String sidoCode, String gugunCode) {
+		
+		return quizMapper.findRandomQuizByRegion(sidoCode, gugunCode);
+	}
+
+	public boolean submitAnswer(String quizId, String userAnswer) {
+
+	    QuizDto quiz = quizMapper.findQuizById(Long.parseLong(quizId));
+
+	    boolean correct = (quiz.getAnswer().equals(userAnswer));
+
+	    quizMapper.insertQuizResult(
+	            quizId,
+	            1L,
+	            userAnswer,
+	            correct
+	    );
+	    
+	    System.out.println(quizId + ", " + "sampleUser" + ", " + userAnswer + ", " + correct);
+
+	    return correct;
+	}
 }

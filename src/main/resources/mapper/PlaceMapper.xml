@@ -166,7 +166,7 @@
         WHERE p.place_id = #{placeId}
     </select>
 
-    <select id="findTagsByPlaceId" resultType="com.ssafy.history.history.dto.HistoryTagDto">
+    <select id="findTagsByPlaceId" resultType="com.ssafy.history.history.dto.QuizRegionTagDto">
         SELECT ht.tag_id, ht.tag_name, ht.tag_type
         FROM place_tags pt
         JOIN history_tags ht ON ht.tag_id = pt.tag_id

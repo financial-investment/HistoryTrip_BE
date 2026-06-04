@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.history.history.dto.HistoryTagDto;
+import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.service.HistoryTagService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +26,7 @@ public class HistoryTagController {
     public HistoryTagController(HistoryTagService historyTagService) {
         this.historyTagService = historyTagService;
     }
+
 
 //    @Operation(summary = "역사 태그 목록 조회")
 //    @GetMapping
@@ -43,4 +44,5 @@ public class HistoryTagController {
 //    public ResponseEntity<HistoryTagDto> findHistoryTagById(@PathVariable long tagId) {
 //        return ResponseEntity.of(Optional.ofNullable(historyTagService.findHistoryTagById(tagId)));
 //    }
+
 }
