@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.trip.mapper.TripPlanMapper">
+    <sql id="tripPlanColumns">
+        trip_plan_id AS id,
+        user_id,
+        title,
+        description,
+        start_date,
+        end_date,
+        created_at,
+        updated_at
+    </sql>
+
+    <sql id="tripPlanPlaceColumns">
+        trip_plan_place_id AS id,
+        place_id,
+        visit_order,
+        visit_date,
+        memo
+    </sql>
+
+    <insert id="insertTripPlan"
+            parameterType="com.ssafy.history.trip.domain.TripPlan"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="trip_plan_id">
+        INSERT INTO trip_plans (
+            user_id,
+            title,
+            description,
+            start_date,
+            end_date
+        )
+        VALUES (
+            #{userId},
+            #{title},
+            #{description},
+            #{startDate},
+            #{endDate}
+        )
+    </insert>
+
+    <select id="findTripPlansByUserId" resultType="com.ssafy.history.trip.domain.TripPlan">
+        SELECT <include refid="tripPlanColumns"/>
+        FROM trip_plans
+        WHERE user_id = #{userId}
+        ORDER BY updated_at DESC, trip_plan_id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="findTripPlanByIdAndUserId" resultType="com.ssafy.history.trip.domain.TripPlan">
+        SELECT <include refid="tripPlanColumns"/>
+        FROM trip_plans
+        WHERE trip_plan_id = #{tripPlanId}
+          AND user_id = #{userId}
+    </select>
+
+    <update id="updateTripPlan" parameterType="com.ssafy.history.trip.domain.TripPlan">
+        UPDATE trip_plans
+        SET
+            title = #{title},
+            description = #{description},
+            start_date = #{startDate},
+            end_date = #{endDate}
+        WHERE trip_plan_id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteTripPlanByIdAndUserId">
+        DELETE FROM trip_plans
+        WHERE trip_plan_id = #{tripPlanId}
+          AND user_id = #{userId}
+    </delete>
+
+    <insert id="insertTripPlanPlace"
+            useGeneratedKeys="true"
+            keyProperty="place.id"
+            keyColumn="trip_plan_place_id">
+        INSERT INTO trip_plan_places (
+            trip_plan_id,
+            place_id,
+            visit_order,
+            visit_date,
+            memo
+        )
+        VALUES (
+            #{tripPlanId},
+            #{place.placeId},
+            #{place.visitOrder},
+            #{place.visitDate},
+            #{place.memo}
+        )
+    </insert>
+
+    <select id="findTripPlanPlacesByTripPlanId" resultType="com.ssafy.history.trip.domain.TripPlanPlace">
+        SELECT <include refid="tripPlanPlaceColumns"/>
+        FROM trip_plan_places
+        WHERE trip_plan_id = #{tripPlanId}
+        ORDER BY visit_order, trip_plan_place_id
+    </select>
+
+    <select id="findTripPlanPlaceResponsesByTripPlanId" resultType="com.ssafy.history.trip.dto.TripPlanPlaceResponseDto">
+        SELECT
+            tpp.trip_plan_place_id AS trip_plan_place_id,
+            tpp.place_id,
+            p.title,
+            p.address,
+            p.latitude,
+            p.longitude,
+            p.image_url,
+            tpp.visit_order,
+            tpp.visit_date,
+            tpp.memo
+        FROM trip_plan_places tpp
+        JOIN historical_places p ON p.place_id = tpp.place_id
+        WHERE tpp.trip_plan_id = #{tripPlanId}
+        ORDER BY tpp.visit_order, tpp.trip_plan_place_id
+    </select>
+
+    <update id="updateTripPlanPlaceVisitInfo">
+        UPDATE trip_plan_places
+        SET
+            visit_date = #{place.visitDate},
+            memo = #{place.memo}
+        WHERE trip_plan_id = #{tripPlanId}
+          AND trip_plan_place_id = #{place.id}
+    </update>
+
+    <update id="updateTripPlanPlaceOrder">
+        UPDATE trip_plan_places
+        SET visit_order = #{visitOrder}
+        WHERE trip_plan_id = #{tripPlanId}
+          AND trip_plan_place_id = #{tripPlanPlaceId}
+    </update>
+
+    <delete id="deleteTripPlanPlace">
+        DELETE FROM trip_plan_places
+        WHERE trip_plan_id = #{tripPlanId}
+          AND trip_plan_place_id = #{tripPlanPlaceId}
+    </delete>
+
+    <select id="findNextVisitOrder" resultType="int">
+        SELECT COALESCE(MAX(visit_order), 0) + 1
+        FROM trip_plan_places
+        WHERE trip_plan_id = #{tripPlanId}
+    </select>
+
+    <select id="countTripPlanPlacesByTripPlanId" resultType="int">
+        SELECT COUNT(*)
+        FROM trip_plan_places
+        WHERE trip_plan_id = #{tripPlanId}
+    </select>
+
+    <select id="existsTripPlanPlace" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM trip_plan_places
+            WHERE trip_plan_id = #{tripPlanId}
+              AND place_id = #{placeId}
+        )
+    </select>
+</mapper>

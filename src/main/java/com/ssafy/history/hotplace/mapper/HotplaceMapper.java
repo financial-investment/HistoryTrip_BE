@@ -1,11 +1,11 @@
-package com.ssafy.history.trip.mapper;
+package com.ssafy.history.hotplace.mapper;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.ssafy.history.trip.dto.HotplaceDto;
-import com.ssafy.history.trip.dto.HotplaceImageDto;
+import com.ssafy.history.hotplace.dto.HotplaceDto;
+import com.ssafy.history.hotplace.dto.HotplaceImageDto;
 
 public interface HotplaceMapper {
     List<HotplaceDto> findHotplaces(

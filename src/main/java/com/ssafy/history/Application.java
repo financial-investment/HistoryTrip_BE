@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan({
 		"com.ssafy.history.board.mapper",
 		"com.ssafy.history.history.mapper",
+		"com.ssafy.history.hotplace.mapper",
 		"com.ssafy.history.quiz.mapper",
 		"com.ssafy.history.region.mapper",
 		"com.ssafy.history.trip.mapper"

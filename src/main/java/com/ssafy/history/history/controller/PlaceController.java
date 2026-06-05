@@ -1,9 +1,9 @@
 package com.ssafy.history.history.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.history.history.dto.HistoricalPlaceDto;
+
+import com.ssafy.history.history.dto.PlaceMapDto;
+
 import com.ssafy.history.history.dto.QuizRegionTagDto;
 import com.ssafy.history.history.dto.PlaceImageDto;
+
 import com.ssafy.history.history.dto.PlaceRegionDto;
 import com.ssafy.history.history.service.PlaceService;
-import com.ssafy.history.news.dto.NewsDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,6 +57,31 @@ public class PlaceController {
     @GetMapping("/{placeId}/images")
     public List<PlaceImageDto> findImagesByPlaceId(@PathVariable long placeId) {
         return placeService.findImagesByPlaceId(placeId);
+    }
+    
+    @Operation(summary = "지도에 표시할 역사 관광지 마커 목록 조회")
+    @GetMapping("/map")
+    public ResponseEntity<List<PlaceMapDto>> findPlacesForMap(
+            @Parameter(description = "시도명 필터") @RequestParam(required = false) String sidoName,
+            @Parameter(description = "구군명 필터") @RequestParam(required = false) String gugunName,
+            @Parameter(description = "관광지명, 주소, 지역명, 시대, 유형, 태그명 통합 검색어")
+            @RequestParam(required = false) String keyword,
+            @Parameter(description = "역사 태그명 필터") @RequestParam(required = false) String tagName,
+            @Parameter(description = "지도 화면의 남쪽 위도") @RequestParam(required = false) BigDecimal minLat,
+            @Parameter(description = "지도 화면의 북쪽 위도") @RequestParam(required = false) BigDecimal maxLat,
+            @Parameter(description = "지도 화면의 서쪽 경도") @RequestParam(required = false) BigDecimal minLng,
+            @Parameter(description = "지도 화면의 동쪽 경도") @RequestParam(required = false) BigDecimal maxLng,
+            @RequestParam(defaultValue = "100") Integer limit) {
+        return ResponseEntity.ok(placeService.findPlacesForMap(
+                sidoName,
+                gugunName,
+                keyword,
+                tagName,
+                minLat,
+                maxLat,
+                minLng,
+                maxLng,
+                limit));
     }
     
     @Operation(summary = "특정 관광지의 지역 찾기")

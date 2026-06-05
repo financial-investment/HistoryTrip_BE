@@ -1,12 +1,12 @@
-package com.ssafy.history.trip.service;
+package com.ssafy.history.hotplace.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.history.trip.dto.HotplaceDto;
-import com.ssafy.history.trip.dto.HotplaceImageDto;
-import com.ssafy.history.trip.mapper.HotplaceMapper;
+import com.ssafy.history.hotplace.dto.HotplaceDto;
+import com.ssafy.history.hotplace.dto.HotplaceImageDto;
+import com.ssafy.history.hotplace.mapper.HotplaceMapper;
 import com.ssafy.history.util.QuerySupport;
 
 @Service
