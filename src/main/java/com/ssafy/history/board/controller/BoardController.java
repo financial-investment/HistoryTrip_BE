@@ -4,16 +4,24 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.history.board.dto.BoardCommentDto;
-import com.ssafy.history.board.dto.BoardDto;
+import com.ssafy.history.board.dto.BoardCreateDto;
+import com.ssafy.history.board.dto.BoardResponseDto;
+import com.ssafy.history.board.dto.BoardUpdateDto;
 import com.ssafy.history.board.dto.BoardImageDto;
 import com.ssafy.history.board.service.BoardService;
+import com.ssafy.history.board.type.ContentType;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,17 +39,17 @@ public class BoardController {
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping
-    public List<BoardDto> findBoards(
+    public List<BoardResponseDto> findBoards(
             @Parameter(description = "제목/내용 검색어") @RequestParam(required = false) String keyword,
-            @Parameter(description = "FREE, TRIP_REVIEW, COURSE_SHARE") @RequestParam(required = false) String boardType,
+            @Parameter(description = "게시글 타입") @RequestParam(required = false) ContentType contentType,
             @RequestParam(defaultValue = "20") Integer limit,
             @RequestParam(defaultValue = "0") Integer offset) {
-        return boardService.findBoards(keyword, boardType, limit, offset);
+        return boardService.findBoards(keyword, contentType, limit, offset);
     }
 
     @Operation(summary = "게시글 단건 조회")
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardDto> findBoardById(@PathVariable long boardId) {
+    public ResponseEntity<BoardResponseDto> findBoardById(@PathVariable long boardId) {
         return ResponseEntity.of(Optional.ofNullable(boardService.findBoardById(boardId)));
     }
 
@@ -56,4 +64,65 @@ public class BoardController {
     public List<BoardImageDto> findImagesByBoardId(@PathVariable long boardId) {
         return boardService.findImagesByBoardId(boardId);
     }
+
+    @Operation(summary = "게시글 작성")
+    @PostMapping
+    public ResponseEntity<Integer> createBoard(@RequestBody BoardCreateDto boardDto) {
+    	int result = boardService.createBoard(boardDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @Operation(summary = "게시글 수정")
+    @PutMapping("/{boardId}")
+    public ResponseEntity<Integer> updateBoard(
+            @PathVariable Long boardId,
+            @RequestBody BoardUpdateDto boardDto) {
+        boardDto.setBoardId(boardId);
+        int result = boardService.updateBoard(boardDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @Operation(summary = "게시글 삭제")
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Integer> deleteBoard(@PathVariable Long boardId) {
+        int result = boardService.deleteBoard(boardId);
+        return ResponseEntity.ok(result);
+    }
+    
+    @Operation(summary = "댓글 삭제")
+    @DeleteMapping("/{boardId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @PathVariable Long boardId,
+            @PathVariable Long commentId) {
+
+        boardService.deleteComment(boardId, commentId);
+
+        return ResponseEntity.ok().build();
+    }
+    
+    @Operation(summary="댓글 작성")
+    @PostMapping("/{boardId}/comments")
+    public ResponseEntity<Void> createComment(
+            //@AuthenticationPrincipal UserPrincipal user,
+            @PathVariable Long boardId,
+            @RequestBody BoardCommentDto commentDto) {
+
+    	commentDto.setBoardId(boardId);
+        boardService.createComment(
+            commentDto
+        );
+
+        return ResponseEntity.ok().build();
+    }
+    
+    @Operation(summary="게시판에 이미지 등록")
+    @PostMapping("/{boardId}/images")
+    public ResponseEntity<Void> uploadImages(
+            @PathVariable Long boardId,
+            @RequestParam("image") List<MultipartFile> images) {
+
+        boardService.uploadImages(boardId, images);
+        return ResponseEntity.ok().build();
+    }
+    
 }
