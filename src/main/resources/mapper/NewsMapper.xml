@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.history.news.mapper.NewsMapper">
+
+    <!-- 장소에 연결된 뉴스를 최신 발행일 순으로 조회한다. -->
+    <select id="findNewsByPlaceId" resultType="com.ssafy.history.news.dto.NewsDto">
+        SELECT
+            n.news_id,
+            n.title,
+            n.url,
+            n.url_hash,
+            n.summary,
+            n.source,
+            n.published_at,
+            n.created_at
+        FROM place_news pn
+        JOIN news n ON n.news_id = pn.news_id
+        WHERE pn.place_id = #{placeId}
+        ORDER BY n.published_at DESC, n.created_at DESC
+    </select>
+
+    <!-- 최근 수집 뉴스 존재 여부를 확인해 RSS 재호출을 줄인다. -->
+    <select id="countRecentNewsByPlaceId" resultType="int">
+        SELECT COUNT(*)
+        FROM place_news pn
+        JOIN news n ON n.news_id = pn.news_id
+        WHERE pn.place_id = #{placeId}
+          AND n.created_at >= #{after}
+    </select>
+
+    <!-- url_hash unique key를 기준으로 같은 뉴스는 갱신한다. -->
+    <insert id="upsertNews">
+        INSERT INTO news
+            (title, url, url_hash, summary, source, published_at)
+        VALUES
+            (#{title}, #{url}, #{urlHash}, #{summary}, #{source}, #{publishedAt})
+        ON DUPLICATE KEY UPDATE
+            title = VALUES(title),
+            summary = VALUES(summary),
+            source = VALUES(source),
+            published_at = VALUES(published_at)
+    </insert>
+
+    <!-- upsert 후 장소-뉴스 매핑에 사용할 news_id를 찾는다. -->
+    <select id="findNewsIdByUrlHash" resultType="long">
+        SELECT news_id
+        FROM news
+        WHERE url_hash = #{urlHash}
+    </select>
+
+    <!-- 이미 연결된 뉴스는 무시하고 신규 연결만 저장한다. -->
+    <insert id="insertPlaceNewsIgnore">
+        INSERT IGNORE INTO place_news
+            (place_id, news_id)
+        VALUES
+            (#{placeId}, #{newsId})
+    </insert>
+
+</mapper>
