@@ -10,7 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		"com.ssafy.history.hotplace.mapper",
 		"com.ssafy.history.quiz.mapper",
 		"com.ssafy.history.region.mapper",
-		"com.ssafy.history.trip.mapper"
+		"com.ssafy.history.trip.mapper",
+		"com.ssafy.history.news.mapper"
 })
 @SpringBootApplication
 public class Application {
